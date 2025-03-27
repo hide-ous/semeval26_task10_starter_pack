@@ -1,5 +1,5 @@
-# SemEval25 (proposal) starter pack
-Scripts to facilitate participation in the 2025 Semeval Task on Conspiracy Detection and Marker Extraction
+# SemEval26 (proposal) starter pack
+Scripts to facilitate participation in the 2026 Semeval Task on Conspiracy Detection and Marker Extraction
 
 --------
 ## Download plain text data
