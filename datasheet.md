@@ -1,4 +1,4 @@
-# Datasheet for dataset "Psycholinguistic Marker Dataset for Conspiracy Theory Detection"
+# Datasheet for dataset "PsyCoMark - Psycholinguistic Conspiracy Marker Dataset"
 
 Questions from the [Datasheets for Datasets](https://arxiv.org/abs/1803.09010) paper, v7.
 
@@ -37,7 +37,7 @@ The dataset aims to advance the computational analysis of conspiracy theory lang
 The instances in this dataset are submission statements from the Reddit platform. These are first-level comments authored by the discussion starter, typically accompanying media submissions, and summarizing the media's relation to the subreddit's topic.
 
 ### How many instances are there in total (of each type, if appropriate)?
-The training split of the dataset presently consists of 1317 submission statements.
+The training split of the dataset presently consists of 1351 submission statements.
 
 ### Does the dataset contain all possible instances or is it a sample (not necessarily random) of instances from a larger set?
 
