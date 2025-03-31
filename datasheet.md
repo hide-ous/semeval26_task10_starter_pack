@@ -33,7 +33,7 @@ The dataset was created by Mattia Samory (Sapienza University of Rome), Felix So
 
 _If there is an associated grant, please provide the name of the grantor and the grant
 name and number._
-The dataset creation was supported, in part, by the Sapienza grant 000090_22_SEED_PNR-\_SAMORY.
+The dataset creation was supported, in part, by the Sapienza grant 000090_22_SEED_PNR-_SAMORY.
 
 ### Any other comments?
 
