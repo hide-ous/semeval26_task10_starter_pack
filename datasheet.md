@@ -46,15 +46,15 @@ The dataset is a sample of submission statements from Reddit. The sampling strat
 ### What data does each instance consist of? 
 
 Each instance consists of one annotated submission statement. Each data point includes:
-	- `_id` (str): the Reddit fullname of the submission statement
-	- `conspiracy` (str): one of `Yes`, `No`, `Can't tell`
-	- `markers` (list of dict): list of psycholinguistic marker spans extracted from the submission statement; each is structured as follows:
-		- `startIndex` (int): first character in the preprocessed text
-		- `endIndex` (int): last character in the preprocessed text
-		- `type` (str): one of `Actor`, `Action`, `Victim`, `Threat`, `Evidence`
-		- `text` (str): the plain text of the marker
-	- `subreddit` (str): the subreddit of the submission statement	
-	- `annotator` (str): the pseudonymized id of the annotator
+- `_id` (str): the Reddit fullname of the submission statement
+- `conspiracy` (str): one of `Yes`, `No`, `Can't tell`
+- `markers` (list of dict): list of psycholinguistic marker spans extracted from the submission statement; each is structured as follows:
+	- `startIndex` (int): first character in the preprocessed text
+	- `endIndex` (int): last character in the preprocessed text
+	- `type` (str): one of `Actor`, `Action`, `Victim`, `Threat`, `Evidence`
+	- `text` (str): the plain text of the marker
+- `subreddit` (str): the subreddit of the submission statement	
+- `annotator` (str): the pseudonymized id of the annotator
 
 
 ### Is there a label or target associated with each instance?
