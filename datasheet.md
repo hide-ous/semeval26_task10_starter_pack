@@ -14,14 +14,7 @@ Jump to section:
 
 ## Motivation
 
-_The questions in this section are primarily intended to encourage dataset creators
-to clearly articulate their reasons for creating the dataset and to promote transparency
-about funding interests._
-
 ### For what purpose was the dataset created? 
-
-_Was there a specific task in mind? Was there a specific gap that needed to be filled?
-Please provide a description._
 
 The dataset was created to address the lack of benchmarks for detecting conspiracy-related content in everyday online conversational settings. It introduces a novel dataset and span identification task focused on uncovering psycholinguistic markers of conspiracy theories. The goal is to improve the performance of conspiracy detection models by leveraging these markers in topic-agnostic conversations.
 
@@ -31,8 +24,6 @@ The dataset was created by Mattia Samory (Sapienza University of Rome), Felix So
 
 ### Who funded the creation of the dataset? 
 
-_If there is an associated grant, please provide the name of the grantor and the grant
-name and number._
 The dataset creation was supported, in part, by the Sapienza grant 000090_22_SEED_PNR-_SAMORY.
 
 ### Any other comments?
@@ -41,16 +32,8 @@ The dataset aims to advance the computational analysis of conspiracy theory lang
 
 ## Composition
 
-_Most of these questions are intended to provide dataset consumers with the
-information they need to make informed decisions about using the dataset for
-specific tasks. The answers to some of these questions reveal information
-about compliance with the EU’s General Data Protection Regulation (GDPR) or
-comparable regulations in other jurisdictions._
-
 ### What do the instances that comprise the dataset represent (e.g., documents, photos, people, countries)?
 
-_Are there multiple types of instances (e.g., movies, users, and ratings; people and
-interactions between them; nodes and edges)? Please provide a description._
 The instances in this dataset are submission statements from the Reddit platform. These are first-level comments authored by the discussion starter, typically accompanying media submissions, and summarizing the media's relation to the subreddit's topic.
 
 ### How many instances are there in total (of each type, if appropriate)?
@@ -58,17 +41,10 @@ The training split of the dataset presently consists of 1317 submission statemen
 
 ### Does the dataset contain all possible instances or is it a sample (not necessarily random) of instances from a larger set?
 
-_If the dataset is a sample, then what is the larger set? Is the sample representative
-of the larger set (e.g., geographic coverage)? If so, please describe how this
-representativeness was validated/verified. If it is not representative of the larger set,
-please describe why not (e.g., to cover a more diverse range of instances, because
-instances were withheld or unavailable)._
 The dataset is a sample of submission statements from Reddit. The sampling strategy involved selecting comments based on specific criteria, including starting with "ss|((submission )?statement)[^a-zA-Z\d]:" and falling within a character length of 160 to 1000. Comments containing quotes were discarded to focus on the author's original text. To address the relative rarity of conspiracy theories on Reddit, the dataset oversampled comments likely to contain them, including 1150 comments from the subreddit r/conspiracy and 1150 comments from other subreddits with at least 10 submission statements (6 comments each). This oversampling means the dataset is not fully representative of the overall distribution of submission statements on Reddit. 
 
 ### What data does each instance consist of? 
 
-_“Raw” data (e.g., unprocessed text or images) or features? In either case, please
-provide a description._
 Each instance consists of one annotated submission statement. Each data point includes:
 	- `_id` (str): the Reddit fullname of the submission statement
 	- `conspiracy` (str): one of `Yes`, `No`, `Can't tell`
@@ -83,78 +59,52 @@ Each instance consists of one annotated submission statement. Each data point in
 
 ### Is there a label or target associated with each instance?
 
-_If so, please provide a description._
 Yes, each instance is associated with two types of labels:
 - Conspiracy Detection: Each comment is classified as either "conspiracy," "not conspiracy," or "can't tell".
 - Conspiracy Marker Extraction: Each comment may contain zero or multiple spans annotated for five specific psycholinguistic markers: Actor, Effect, Victim, Evidence, and Action.
 
 ### Is any information missing from individual instances?
 
-_If so, please provide a description, explaining why this information is missing (e.g.,
-because it was unavailable). This does not include intentionally removed information,
-but might include, e.g., redacted text._
-
 Raw text of the submission statements is not released, and should be rehydrated from Reddit archives. Preprocessing steps on the raw text should also be replicated to match marker positions. Preprocessing includes removal of URLs and stripping leading and trailing whitespace. Rehydration and preprocessing can be accomplished through the script provided at this link: https://github.com/hide-ous/semeval26_starter_pack
 
 ### Are relationships between individual instances made explicit (e.g., users’ movie ratings, social network links)?
 
-_If so, please describe how these relationships are made explicit._
 The primary relationship made explicit is the annotation of conspiracy labels and psycholinguistic markers within each individual submission statement. The dataset also retains information about the subreddit from which each comment was sourced, which implicitly links comments within the same subreddit.
 
 ### Are there recommended data splits (e.g., training, development/validation, testing)?
 
-_If so, please provide a description of these splits, explaining the rationale behind them._
-
 The data shared is a a random sample of 80% of the annotated data, intended for model training and development. The test set was retained as private to enable participation in competitive shared tasks.
 
 ### Are there any errors, sources of noise, or redundancies in the dataset?
-
-_If so, please provide a description._
 
 The inter-annotator agreement for the binary conspiracy labels is measured as Krippendorff's α=0.43. This indicates a moderate level of agreement, suggesting some inherent ambiguity or noise in the labeling process. The "can't tell" category also acknowledges instances where classification was difficult. A portion of the data was annotated by multiple annotators, however the training set does not include repeated entries. The plain text of the submission statements may become unavailable as authors and moderators may remove them.
 
 
 ### Is the dataset self-contained, or does it link to or otherwise rely on external resources (e.g., websites, tweets, other datasets)?
 
-_If it links to or relies on external resources, a) are there guarantees that they will
-exist, and remain constant, over time; b) are there official archival versions of the
-complete dataset (i.e., including the external resources as they existed at the time the
-dataset was created); c) are there any restrictions (e.g., licenses, fees) associated with
-any of the external resources that might apply to a future user? Please provide descriptions
-of all external resources and any restrictions associated with them, as well as links or other
-access points, as appropriate._
-
 Rehydration of raw text relies on either Reddit's API or third-party Reddit archives. The rehydration script linked in this document relies on Project Arctic Shift. The continued availability of the original Reddit content is not guaranteed.
 
 ### Does the dataset contain data that might be considered confidential (e.g., data that is protected by legal privilege or by doctor-patient confidentiality, data that includes the content of individuals’ non-public communications)?
 
-_If so, please provide a description._
 The raw data was obtained from publicly accessible archives on Reddit. The dataset is released without author identifiers and raw comment text to preserve privacy.
 
 ### Does the dataset contain data that, if viewed directly, might be offensive, insulting, threatening, or might otherwise cause anxiety?
 
-_If so, please describe why._
 Given the topic of conspiracy theories and the diverse range of subreddits from which the data was collected (including subreddits like conspiracy, ufobelievers, epstein, hongkong, truecrime, news), it is possible that some content within the dataset could be perceived as offensive, insulting, threatening, or anxiety-inducing by some individuals. Conspiracy theories can touch upon sensitive topics and may contain strong opinions or unsubstantiated claims.
 
 ### Does the dataset relate to people? 
 
-_If not, you may skip the remaining questions in this section._
 Yes, the dataset contains text written by people in the form of Reddit comments.
 
 ### Does the dataset identify any subpopulations (e.g., by age, gender)?
 
-_If so, please describe how these subpopulations are identified and provide a description of
-their respective distributions within the dataset._
 The provided text does not indicate that specific demographic subpopulations like age or gender are explicitly identified or annotated within the dataset. The data is categorized by conspiracy-relatedness and the presence of psycholinguistic markers.
 
 ### Is it possible to identify individuals (i.e., one or more natural persons), either directly or indirectly (i.e., in combination with other data) from the dataset?
 
-_If so, please describe how._
 The data is released without personal identifiers and raw comment text to preserve privacy. However, the original Reddit comment, which might contain usernames or other potentially identifying information, could be retrieved.
 
 ### Does the dataset contain data that might be considered sensitive in any way (e.g., data that reveals racial or ethnic origins, sexual orientations, religious beliefs, political opinions or union memberships, or locations; financial or health data; biometric or genetic data; forms of government identification, such as social security numbers; criminal history)?
-
-_If so, please provide a description._
 
 Reddit comments can potentially contain a wide range of personal opinions and information, including political opinions, religious beliefs, and potentially other sensitive topics depending on the subreddit and the content of the discussion. The dataset's includes comments from subreddits related to politics, news, and specific events which may lead to encountering such sensitive information.
 
@@ -162,22 +112,13 @@ Reddit comments can potentially contain a wide range of personal opinions and in
 
 ## Collection process
 
-_\[T\]he answers to questions here may provide information that allow others to
-reconstruct the dataset without access to it._
-
 ### How was the data associated with each instance acquired?
-
-_Was the data directly observable (e.g., raw text, movie ratings), reported by subjects (e.g.,
-survey responses), or indirectly inferred/derived from other data (e.g., part-of-speech tags,
-model-based guesses for age or language)? If data was reported by subjects or indirectly
-inferred/derived from other data, was the data validated/verified? If so, please describe how._
 
 The data consists of submission statements selected from Reddit archives. The selection process involved identifying comments based on specific textual patterns (starting with "ss" or "submission statement") and length. Subreddits who used submission statements for purposes other than explaining event- or narrative- based media in the original submission were discarded.
 The subreddits that were manually excluded are the following: 'u_PlanetToday', 'supremeclothing', 'sneakermarket', 'rccars', 'portugueses', 'outlinevpn', 'microgrowery', 'marioandluigi', 'libertarianmeme', 'leagueoflegends', 'juggling', 'fo4', 'education', 'baseball', 'VaporwaveArt', 'SubSimGPT2Interactive', 'Plumbing', 'PhotoshopRequest', 'NBASpurs', 'NBASpurs', 'HollywoodUndead', 'Greyhawk', 'Filmmakers', 'FightingFakeNews', 'Fallout', 'EDC', 'CplSyx', 'CplSyx', 'Aquariums', 'juggling', 'Degrassi', 'coasttocoastam', 'coasttocoastpm', 'coasttocoast', 'woodworking','whatisthisthing' ,'vinyl', 'vexillology' ,'pcmasterrace', 'movies', 'dataisbeautiful', 'cinematography',  'cats', 'backpacking', 'adventures','Homesteading','EuroArchitecture', 'AfricanArchitecture',  'AccidentalRenaissance', 'Greyhawk', 'DronedOrc','DnD', 'CombatFootage','Boruto', 'AskReddit', 'Aquariums','pics', 'Watches'
 
 ### What mechanisms or procedures were used to collect the data (e.g., hardware apparatus or sensor, manual human curation, software program, software API)?
 
-_How were these mechanisms or procedures validated?_
 The data was collected using a python script matching regular expressions in comments from the Pushshift and Arctic Shift Project Reddit archives. 
 
 ### If the dataset is a sample from a larger set, what was the sampling strategy (e.g., deterministic, probabilistic with specific sampling probabilities)?
@@ -189,49 +130,32 @@ The annotation process was conducted through the crowdwork platform Prolific, wi
 
 ### Over what timeframe was the data collected?
 
-_Does this timeframe match the creation timeframe of the data associated with the instances (e.g.
-recent crawl of old news articles)? If not, please describe the timeframe in which the data
-associated with the instances was created._
 Data was collected between January and March 2025. The timespan of the instances is March 2013 to December 2023.
 
 ### Were any ethical review processes conducted (e.g., by an institutional review board)?
 
-_If so, please provide a description of these review processes, including the outcomes, as well as
-a link or other access point to any supporting documentation._
 Yes, the paper mentions obtaining IRB approval from GESIS Cologne for the annotation task, although the raw data was obtained from publicly accessible archives.
 
 ### Does the dataset relate to people?
 
-_If not, you may skip the remainder of the questions in this section._
 Yes, the dataset relates to people as it refers to their written comments.
 
 ### Did you collect the data from the individuals in question directly, or obtain it via third parties or other sources (e.g., websites)?
- The data was obtained from third-party archives Pushshift and Arctic Shift Project.
+The data was obtained from third-party archives Pushshift and Arctic Shift Project.
 
 ### Were the individuals in question notified about the data collection?
 
-_If so, please describe (or show with screenshots or other information) how notice was provided,
-and provide a link or other access point to, or otherwise reproduce, the exact language of the
-notification itself._
 Individual users were not directly notified about the collection.
 
 ### Did the individuals in question consent to the collection and use of their data?
 
-_If so, please describe (or show with screenshots or other information) how consent was
-requested and provided, and provide a link or other access point to, or otherwise reproduce, the
-exact language to which the individuals consented._
 Consent was not directly obtained from individual Reddit users for the collection of publicly available comments.
 
 ### If consent was obtained, were the consenting individuals provided with a mechanism to revoke their consent in the future or for certain uses?
 
-_If so, please provide a description, as well as a link or other access point to the mechanism
-(if appropriate)._
 Users can request exclusion from the data sources used.
 
 ### Has an analysis of the potential impact of the dataset and its use on data subjects (e.g., a data protection impact analysis) been conducted?
-
-_If so, please provide a description of this analysis, including the outcomes, as well as a link
-or other access point to any supporting documentation._
 
 We release the dataset without author identifiers and raw comment text to preserve privacy, in consideration of the potential impact on data subjects. The aim of the research is to understand and detect conspiracy theories, which could indirectly impact individuals who hold or are affected by such beliefs. 
 
@@ -239,15 +163,7 @@ We release the dataset without author identifiers and raw comment text to preser
 
 ## Preprocessing/cleaning/labeling
 
-_The questions in this section are intended to provide dataset consumers with the information
-they need to determine whether the “raw” data has been processed in ways that are compatible
-with their chosen tasks. For example, text that has been converted into a “bag-of-words” is
-not suitable for tasks involving word order._
-
 ### Was any preprocessing/cleaning/labeling of the data done (e.g., discretization or bucketing, tokenization, part-of-speech tagging, SIFT feature extraction, removal of instances, processing of missing values)?
-
-_If so, please provide a description. If not, you may skip the remainder of the questions in
-this section._
 
 Yes, preprocessing steps were performed:
 - Submission statements were selected based on starting with the specified phrase and having a length between 160 and 1000 characters.
@@ -258,13 +174,10 @@ Yes, preprocessing steps were performed:
 
 ### Was the “raw” data saved in addition to the preprocessed/cleaned/labeled data (e.g., to support unanticipated future uses)?
 
-_If so, please provide a link or other access point to the “raw” data._
-
 The original Reddit identifiers are retained, allowing for potential retrieval of the raw data, subject to Reddit's availability.
 
 ### Is the software used to preprocess/clean/label the instances available?
 
-_If so, please provide a link or other access point._
 Preprocessing can be accomplished through the script provided at this link: https://github.com/hide-ous/semeval26_starter_pack
 
 ### Any other comments?
@@ -272,21 +185,14 @@ The annotation process involved training annotators on the task and codebook, an
 
 ## Uses
 
-_These questions are intended to encourage dataset creators to reflect on the tasks
-for which the dataset should and should not be used. By explicitly highlighting these tasks,
-dataset creators can help dataset consumers to make informed decisions, thereby avoiding
-potential risks or harms._
-
 ### Has the dataset been used for any tasks already?
 
-_If so, please provide a description._
 Yes, the dataset has been used to develop baseline models for two subtasks:
 - Conspiracy Marker Extraction: A distilbert-base model with a token classification head achieved an F1 score of 0.2.
 - Conspiracy Detection: Two distilbert-base models, one with a sequence classification head and another encoding conspiracy markers with special tokens, achieved F1 scores of 0.63 and 0.67 respectively.
 
 ### Is there a repository that links to any or all papers or systems that use the dataset?
 
-_If so, please provide a link or other access point._
 No.
 
 ### What (other) tasks could the dataset be used for?
@@ -300,11 +206,6 @@ This dataset could be used for various research tasks, including:
 
 ### Is there anything about the composition of the dataset or the way it was collected and preprocessed/cleaned/labeled that might impact future uses?
 
-_For example, is there anything that a future user might need to know to avoid uses that
-could result in unfair treatment of individuals or groups (e.g., stereotyping, quality of
-service issues) or other undesirable harms (e.g., financial harms, legal risks) If so, please
-provide a description. Is there anything a future user could do to mitigate these undesirable
-harms?_
 Yes, several aspects might impact future uses:
 - The dataset is limited to Reddit submission statements, which might not fully represent all forms of online conspiracy discussions.
 - The oversampling of potentially conspiracy-related content means the dataset does not reflect the natural prevalence of such content on Reddit.
@@ -313,7 +214,6 @@ Yes, several aspects might impact future uses:
 
 ### Are there tasks for which the dataset should not be used?
 
-_If so, please provide a description._
 The dataset might not be suitable for directly assessing the overall prevalence of conspiracy theories on Reddit or other platforms due to the oversampling strategy. It is also important to be cautious when generalizing findings based on this dataset to other types of online communication beyond Reddit submission statements. Conspiracy theorizing is a stigmatized practice and participation in conspiracy theory communities provides benefits to their members (including social, psychological, and epistemic), therefore applications of the dataset should not marginalize individuals.
 
 ### Any other comments?
@@ -323,12 +223,10 @@ The dataset's focus on psychologically grounded markers offers a unique approach
 
 ### Will the dataset be distributed to third parties outside of the entity (e.g., company, institution, organization) on behalf of which the dataset was created? 
 
-_If so, please provide a description._
 Yes, the dataset is made available through Zenodo.
 
 ### How will the dataset will be distributed (e.g., tarball on website, API, GitHub)?
 
-_Does the dataset have a digital object identifier (DOI)?_
 The dataset is distributed in jsonl format through the Zenodo repository and is expected to have a persistent DOI.
 
 ### When will the dataset be distributed?
@@ -336,29 +234,18 @@ The dataset is distributed in jsonl format through the Zenodo repository and is 
 
 ### Will the dataset be distributed under a copyright or other intellectual property (IP) license, and/or under applicable terms of use (ToU)?
 
-_If so, please describe this license and/or ToU, and provide a link or other access point to,
-or otherwise reproduce, any relevant licensing terms or ToU, as well as any fees associated
-with these restrictions._
 The dataset is released under CC-BY license.
 
 ### Have any third parties imposed IP-based or other restrictions on the data associated with the instances?
 
-_If so, please describe these restrictions, and provide a link or other access point to, or
-otherwise reproduce, any relevant licensing terms, as well as any fees associated with these
-restrictions._
 Reddit's terms of service generally apply to the original source data.
 
 ### Do any export controls or other regulatory restrictions apply to the dataset or to individual instances?
 
-_If so, please describe these restrictions, and provide a link or other access point to, or otherwise
-reproduce, any supporting documentation._
 
 ### Any other comments?
 
 ## Maintenance
-
-_These questions are intended to encourage dataset creators to plan for dataset maintenance
-and communicate this plan with dataset consumers._
 
 ### Who is supporting/hosting/maintaining the dataset?
 The dataset is hosted on Zenodo, a platform for open research data. The creators, Mattia Samory, Felix Soldner, and Veronika Batzdorfer, are responsible for its maintenance and updates.
@@ -368,29 +255,22 @@ Creators can be contacted via email at their current affiliation.
 
 ### Is there an erratum?
 
-_If so, please provide a link or other access point._
 Users should refer to the Zenodo page for any updates or corrections.
 
 ### Will the dataset be updated (e.g., to correct labeling errors, add new instances, delete instances)?
 
-_If so, please describe how often, by whom, and how updates will be communicated to users (e.g., mailing list, GitHub)?_
 Updates to the dataset are planned and will be enacted by introducing new version of the dataset on Zenodo. 
 
 ### If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances (e.g., were individuals in question told that their data would be retained for a fixed period of time and then deleted)?
 
-_If so, please describe these limits and explain how they will be enforced._
 There are no specific retention limits of the data shared. Reddit's platform policies govern the retention of the original comments.
 
 ### Will older versions of the dataset continue to be supported/hosted/maintained?
 
-_If so, please describe how. If not, please describe how its obsolescence will be communicated to users._
 Zenodo maintains versions of datasets. The policy on supporting older versions will be managed through the Zenodo platform and communicated on the dataset's Zenodo page.
 
 ### If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so?
 
-_If so, please provide a description. Will these contributions be validated/verified? If so,
-please describe how. If not, why not? Is there a process for communicating/distributing these
-contributions to other users? If so, please provide a description._
 The dataset is shared under a CC-BY license, encouraging reuse and adaptation. Researchers interested in extending the dataset are welcome to contact the creators.
 
 ### Any other comments?
