@@ -1,5 +1,5 @@
-# SemEval26 (proposal) starter pack
-Scripts to facilitate participation in the 2026 Semeval Task: PsyCoMark -- Psycholinguistic Conspiracy Marker Extraction and Detection
+# SemEval 2026 Task 10  starter pack
+Scripts to facilitate participation in the 2026 Semeval Task 10: PsyCoMark -- Psycholinguistic Conspiracy Marker Extraction and Detection
 
 --------
 ## Download plain text data
