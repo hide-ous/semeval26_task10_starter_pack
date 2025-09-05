@@ -30,7 +30,7 @@ def replace_urls(x, url_replacement_token='<URL>'):
 
 
 def replace_ss_prefix(x):
-    return re.sub(r'^\W*(summary statement|submission statement|ss)[^a-zA-Z]*', "", x, flags=re.I | re.U).strip()
+    return re.sub(r'^\W*(summary statement|submission statement|ss)[^a-zA-Z]*',"",  x, flags=re.I|re.U).strip()
 
 def preprocess(x):
     return replace_ss_prefix(replace_urls(markdown_to_text(x)))
@@ -54,9 +54,9 @@ def rehydrate_comments(input_file, output_file):
                 item = json.loads(line)
                 if '_id' in item and item['_id'].startswith('t1_'):
                     comment_id_with_prefix = item['_id']
-                    comment_id_without_prefix = comment_id_with_prefix[3:]  # Remove 't1_' prefix
+                    comment_id_without_prefix = comment_id_with_prefix[3:] # Remove 't1_' prefix
                     ids_to_fetch_with_prefix.append(comment_id_with_prefix)
-                    original_data_map[comment_id_with_prefix] = item  # Store original data by full _id
+                    original_data_map[comment_id_with_prefix] = item # Store original data by full _id
             except json.JSONDecodeError:
                 print(f"Skipping invalid JSON line: {line.strip()}")
 
@@ -67,8 +67,7 @@ def rehydrate_comments(input_file, output_file):
     # Process IDs in batches of up to 500
     for i in tqdm(range(0, len(ids_to_fetch_with_prefix), 500), desc="Rehydrating comments"):
         batch_ids_with_prefix = ids_to_fetch_with_prefix[i:i + 500]
-        batch_ids_without_prefix = [comment_id[3:] for comment_id in
-                                    batch_ids_with_prefix]  # Remove prefix for the request
+        batch_ids_without_prefix = [comment_id[3:] for comment_id in batch_ids_with_prefix] # Remove prefix for the request
         params = {
             "ids": ",".join(batch_ids_without_prefix),
             "fields": fields
@@ -81,7 +80,7 @@ def rehydrate_comments(input_file, output_file):
 
             if "data" in api_response and isinstance(api_response["data"], list):
                 rehydrated_comments_batch = api_response["data"]
-                rehydrated_map = {comment['id']: comment for comment in rehydrated_comments_batch}
+                rehydrated_map = {comment['id']: comment for comment in rehydrated_comments_batch if comment.get('body', '[deleted]').strip() not in ['[deleted]', '[removed]']}
 
                 for comment_id_with_prefix in batch_ids_with_prefix:
                     comment_id_without_prefix = comment_id_with_prefix[3:]
@@ -89,7 +88,7 @@ def rehydrate_comments(input_file, output_file):
                         rehydrated_comment = rehydrated_map[comment_id_without_prefix]
                         original_item = original_data_map[comment_id_with_prefix]
                         merged_item = {
-                            "_id": f"t1_{rehydrated_comment['id']}",  # Add the prefix back to the _id in the output
+                            "_id": f"t1_{rehydrated_comment['id']}", # Add the prefix back to the _id in the output
                             "text": preprocess(rehydrated_comment['body']),
                             "subreddit": rehydrated_comment['subreddit'],
                             "conspiracy": original_item.get("conspiracy"),
@@ -100,8 +99,7 @@ def rehydrate_comments(input_file, output_file):
                     elif comment_id_with_prefix in original_data_map:
                         print(f"Warning: Could not rehydrate comment with id '{comment_id_with_prefix}'")
             else:
-                print(
-                    f"Warning: Unexpected API response format for batch starting with '{batch_ids_without_prefix[0]}'")
+                print(f"Warning: Unexpected API response format for batch starting with '{batch_ids_without_prefix[0]}'")
 
         except requests.exceptions.RequestException as e:
             print(f"Error during API request: {e}")
