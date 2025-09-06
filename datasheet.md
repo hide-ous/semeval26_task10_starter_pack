@@ -24,7 +24,7 @@ The dataset was created by Mattia Samory (Sapienza University of Rome), Felix So
 
 ### Who funded the creation of the dataset? 
 
-The dataset creation was supported, in part, by the Sapienza grant 000090_22_SEED_PNR-_SAMORY.
+The dataset creation was supported, in part, by the Sapienza grant 000090_22_SEED_PNR-_SAMORY and by GESIS.
 
 ### Any other comments?
 
@@ -37,11 +37,11 @@ The dataset aims to advance the computational analysis of conspiracy theory lang
 The instances in this dataset are submission statements from the Reddit platform. These are first-level comments authored by the discussion starter, typically accompanying media submissions, and summarizing the media's relation to the subreddit's topic.
 
 ### How many instances are there in total (of each type, if appropriate)?
-The training split of the dataset presently consists of 1351 submission statements.
+The training split of the dataset presently consists of 4361 submission statements.
 
 ### Does the dataset contain all possible instances or is it a sample (not necessarily random) of instances from a larger set?
 
-The dataset is a sample of submission statements from Reddit. The sampling strategy involved selecting comments based on specific criteria, including starting with "ss|((submission )?statement)[^a-zA-Z\d]:" and falling within a character length of 160 to 1000. Comments containing quotes were discarded to focus on the author's original text. To address the relative rarity of conspiracy theories on Reddit, the dataset oversampled comments likely to contain them, including 1150 comments from the subreddit r/conspiracy and 1150 comments from other subreddits with at least 10 submission statements (6 comments each). This oversampling means the dataset is not fully representative of the overall distribution of submission statements on Reddit. 
+The dataset is a sample of submission statements from Reddit. The sampling strategy involved selecting comments based on specific criteria, including starting with "ss|((submission )?statement)[^a-zA-Z\d]:" and falling within a character length of 160 to 1000. Comments containing quotes were discarded to focus on the author's original text. To address the relative rarity of conspiracy theories on Reddit, the dataset oversampled comments likely to contain them, including 1150 comments from the subreddit r/conspiracy and the remaining comments from other subreddits with at least 10 submission statements. This oversampling means the dataset is not fully representative of the overall distribution of submission statements on Reddit. 
 
 ### What data does each instance consist of? 
 
@@ -73,11 +73,11 @@ The primary relationship made explicit is the annotation of conspiracy labels an
 
 ### Are there recommended data splits (e.g., training, development/validation, testing)?
 
-The data shared is a a random sample of 80% of the annotated data, intended for model training and development. The test set was retained as private to enable participation in competitive shared tasks.
+The data shared is a random sample of ~90% of the annotated data, intended for model training and development. The test set was retained as private to enable participation in competitive shared tasks.
 
 ### Are there any errors, sources of noise, or redundancies in the dataset?
 
-The inter-annotator agreement for the binary conspiracy labels is measured as Krippendorff's α=0.43. This indicates a moderate level of agreement, suggesting some inherent ambiguity or noise in the labeling process. The "can't tell" category also acknowledges instances where classification was difficult. A portion of the data was annotated by multiple annotators, however the training set does not include repeated entries. The plain text of the submission statements may become unavailable as authors and moderators may remove them.
+The inter-annotator agreement for the binary conspiracy labels is measured as Krippendorff's α=0.58. This indicates a moderate level of agreement, suggesting some inherent ambiguity or noise in the labeling process. The "can't tell" category also acknowledges instances where classification was difficult (α=0.50 if including the "can't tell" label). A portion of the data was annotated by multiple annotators and the training set does include repeated entries. The plain text of the submission statements may become unavailable as authors and moderators may remove them.
 
 
 ### Is the dataset self-contained, or does it link to or otherwise rely on external resources (e.g., websites, tweets, other datasets)?
@@ -187,9 +187,7 @@ The annotation process involved training annotators on the task and codebook, an
 
 ### Has the dataset been used for any tasks already?
 
-Yes, the dataset has been used to develop baseline models for two subtasks:
-- Conspiracy Marker Extraction: A distilbert-base model with a token classification head achieved an F1 score of 0.2.
-- Conspiracy Detection: Two distilbert-base models, one with a sequence classification head and another encoding conspiracy markers with special tokens, achieved F1 scores of 0.63 and 0.67 respectively.
+No.
 
 ### Is there a repository that links to any or all papers or systems that use the dataset?
 
@@ -209,7 +207,7 @@ This dataset could be used for various research tasks, including:
 Yes, several aspects might impact future uses:
 - The dataset is limited to Reddit submission statements, which might not fully represent all forms of online conspiracy discussions.
 - The oversampling of potentially conspiracy-related content means the dataset does not reflect the natural prevalence of such content on Reddit.
-- The inter-annotator agreement for conspiracy labels (α=0.43) suggests some level of subjectivity and potential noise in the classification.
+- The inter-annotator agreement for conspiracy labels (α=0.58) suggests some level of subjectivity and potential noise in the classification.
 - The annotators were selected from specific English-speaking countries, potentially introducing cultural biases in the identification of conspiracy theories.
 
 ### Are there tasks for which the dataset should not be used?
