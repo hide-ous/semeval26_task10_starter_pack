@@ -2,3 +2,4 @@ beautifulsoup4
 Markdown
 tqdm
 requests
+scikit-learn

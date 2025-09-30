@@ -2,10 +2,8 @@ import json
 import argparse
 import os
 import sys
-from collections import defaultdict
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score
 
-# Define the category labels for consistent metric calculation
 CATEGORIES = ["No", "Yes"]
 
 
@@ -50,9 +48,7 @@ def evaluate_submission(reference_file, submission_file, output_path="."):
     and saves the results to scores.json.
     """
     # 1. Load Data
-    # Reference file uses 'conspiracy' field for the true label (from the original data)
     ref_data = load_jsonl(reference_file, id_field="_id", label_field="conspiracy")
-    # Submission file uses 'prediction' field for the predicted label (from inference_with_markers.py)
     sub_data = load_jsonl(submission_file, id_field="_id", label_field="conspiracy")
 
     if not ref_data or not sub_data:
@@ -73,7 +69,7 @@ def evaluate_submission(reference_file, submission_file, output_path="."):
 
     # 3. Calculate Metrics
 
-    # Weighted F1 Score (Standard for imbalanced multi-class/binary classification)
+    # Weighted F1 Score
     f1_weighted = f1_score(y_true, y_pred, labels=CATEGORIES, average='weighted', zero_division=0)
 
     # Other useful metrics
@@ -83,7 +79,6 @@ def evaluate_submission(reference_file, submission_file, output_path="."):
     )
 
     # 4. Prepare Scores for Output
-    # Codalab/Codabench typically expects a JSON file with a list of key/value objects
     scores = {
               "f1_score_weighted": float(f1_weighted),
               "accuracy": float(accuracy),

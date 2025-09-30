@@ -6,13 +6,11 @@ import re
 from typing import Dict, List, Set, Tuple
 
 # --- Configuration ---
-# Default file paths
 DEFAULT_TEST_FILE = "test.jsonl"
 DEFAULT_SUBMISSION_FILE = "submission_span.jsonl"
 DEFAULT_SCORES_FILE = "scores.json"
 
 MARKER_TYPES = {"Action", "Actor", "Effect", "Evidence", "Victim"}
-# Define the standard strictness for span matching
 DEFAULT_IOU_THRESHOLD = 0.5
 
 
@@ -335,7 +333,7 @@ def save_scores_to_codabench(results, output_file):
     with open(output_file, 'w') as f:
         json.dump(scores, f, indent=4)
 
-    print(f"✅ Token-based scores saved to {output_file} for Codabench compatibility.")
+    print(f"Token-based scores saved to {output_file} for Codabench compatibility.")
 
 
 if __name__ == "__main__":
@@ -366,13 +364,10 @@ if __name__ == "__main__":
 
         save_scores_to_codabench(default_results, SCORES_FILE)
     else:
-        # 3. Perform Evaluation
         raw_results, formatted_results = evaluate(true_data, pred_data, iou_threshold=IOU_THRESHOLD_RUNTIME)
 
-        # 4. Save Scores to Codabench Output
         save_scores_to_codabench(raw_results, SCORES_FILE)
 
-        # 5. Print Results to Console
         print("\n--- Token-Based Evaluation Results ---")
         for key, value in formatted_results.items():
             if key.startswith("---"):
