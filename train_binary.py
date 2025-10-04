@@ -3,7 +3,7 @@ from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassific
 from transformers import TrainingArguments, Trainer
 from datasets import Dataset
 import numpy as np
-# from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+
 
 def load_and_filter_data(file_path):
     """Loads data from a JSON file and filters out entries with 'Can't tell'."""
@@ -18,26 +18,18 @@ def load_and_filter_data(file_path):
                 print(f"Skipping invalid JSON line: {line.strip()}")
     return data
 
+
 def tokenize_data(dataset, tokenizer):
     """Tokenizes the text data."""
     return dataset.map(lambda examples: tokenizer(examples["text"], truncation=True), batched=True)
 
+
 def encode_labels(dataset, label_to_id):
     """Encodes the labels to numerical values."""
-    return dataset.map(lambda examples: {'labels': [label_to_id[label] for label in examples["conspiracy"]]}, batched=True)
+    return dataset.map(lambda examples: {'labels': [label_to_id[label] for label in examples["conspiracy"]]},
+                       batched=True)
 
-# def compute_metrics(p):
-#     """Computes precision, recall, accuracy, and F1 score."""
-#     predictions, labels = p
-#     predictions = np.argmax(predictions, axis=1)
-#     precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='weighted')
-#     accuracy = accuracy_score(labels, predictions)
-#     return {
-#         'accuracy': accuracy,
-#         'precision': precision,
-#         'recall': recall,
-#         'f1': f1
-#     }
+
 def save_predictions(trainer, test_dataset, output_file):
     """Saves predictions and true labels to a JSON file."""
     predictions = trainer.predict(test_dataset)
@@ -53,6 +45,8 @@ def save_predictions(trainer, test_dataset, output_file):
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=4)
     print(f"Predictions saved to {output_file}")
+
+
 if __name__ == "__main__":
     train_file = "train_rehydrated.jsonl"
     model_name = "distilbert-base-uncased"
@@ -78,7 +72,8 @@ if __name__ == "__main__":
     encoded_train_dataset = encode_labels(tokenized_train_dataset, label_to_id)
 
     # Load the model
-    model = DistilBertForSequenceClassification.from_pretrained(model_name, num_labels=num_labels, id2label=id_to_label, label2id=label_to_id)
+    model = DistilBertForSequenceClassification.from_pretrained(model_name, num_labels=num_labels, id2label=id_to_label,
+                                                                label2id=label_to_id)
 
     # Define training arguments
     training_args = TrainingArguments(
@@ -88,7 +83,6 @@ if __name__ == "__main__":
         per_device_eval_batch_size=batch_size,
         num_train_epochs=num_epochs,
         weight_decay=0.01,
-        # eval_strategy="epoch",
         logging_dir='./logs',
         report_to="none"
     )
@@ -98,7 +92,6 @@ if __name__ == "__main__":
         model=model,
         args=training_args,
         train_dataset=encoded_train_dataset,
-        # compute_metrics=compute_metrics,
         tokenizer=tokenizer
     )
 
@@ -106,4 +99,3 @@ if __name__ == "__main__":
     print("Training the model...")
     trainer.train()
     print("Training finished.")
-
