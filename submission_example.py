@@ -11,7 +11,7 @@ DEFAULT_INPUT_FILE = "dev_rehydrated.jsonl"
 DEFAULT_OUTPUT_ZIP = "submission.zip"
 TEMP_SUBMISSION_FILE = "submission.jsonl"  # The unzipped file name required by Codabench
 
-# Marker Types (used to define which models to run for span prediction)
+# Marker Types
 MARKER_TYPES = ["Action", "Actor", "Effect", "Evidence", "Victim"]
 
 
@@ -118,13 +118,12 @@ def save_and_zip(file_path: str, data: List[Dict], output_zip_path: str):
     # 2. Create the ZIP archive
     print(f"Creating ZIP archive: {output_zip_path}")
     with zipfile.ZipFile(output_zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-        # Add the temporary file to the zip, ensuring the internal name is submission.jsonl
         zf.write(file_path, arcname=TEMP_SUBMISSION_FILE)
 
     # 3. Clean up the temporary file
     os.remove(file_path)
 
-    print(f"✅ Successfully created final submission ZIP file: {output_zip_path}")
+    print(f"Successfully created final submission ZIP file: {output_zip_path}")
 
 
 def parse_args():

@@ -3,3 +3,7 @@ Markdown
 tqdm
 requests
 scikit-learn
+torch
+transformers
+datasets
+accelerate
