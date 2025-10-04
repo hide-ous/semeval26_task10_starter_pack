@@ -15,8 +15,11 @@ Scripts to facilitate participation in the 2026 Semeval Task 10: PsyCoMark -- Ps
 2. run `infer_binary.py`
 3. zip the submission `submission.jsonl` --> `submission.zip`
 4. go to the [detection task on codabench](https://www.codabench.org/competitions/10749/)
-5. under my submissions -> upload the zip file -> wait a few minutes for evaluation -> add to the leaderboard and make public
-6. you should score ~ 0.76 weighted F1 on the dev set
+   1. go to the "my submissions" tab 
+   2. upload the zip file
+   3. wait a few minutes for evaluation (tip: if the page does not reload, switch back and forth to the test phase)
+   4. add the result to the leaderboard and make it public!
+   5. you should score ~ 0.76 weighted F1 on the dev set
 
 ## [Optional] Train conspiracy marker extraction baseline and submit to codabench
 1. same instructions as above, but with `train_one_span.py` (~30 minutes on gpu) and `infer_one_span.py`
