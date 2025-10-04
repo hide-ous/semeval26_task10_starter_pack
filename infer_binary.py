@@ -1,4 +1,6 @@
 import json
+import sys
+
 import numpy as np
 import os
 import glob
@@ -7,7 +9,7 @@ from transformers import (
     DistilBertTokenizerFast,
     DistilBertForSequenceClassification,
     Trainer,
-    DataCollatorWithPadding, 
+    DataCollatorWithPadding,
 )
 from transformers import TrainingArguments
 
@@ -18,6 +20,7 @@ SUBMISSION_FILE = "submission.jsonl"
 MODEL_NAME = "distilbert-base-uncased"
 LABEL_MAP = {0: "No", 1: "Yes"}
 BATCH_SIZE = 64
+
 
 def find_latest_checkpoint(base_path):
     """
@@ -39,6 +42,7 @@ def find_latest_checkpoint(base_path):
     print(f"Found latest checkpoint: {latest_checkpoint}")
     return latest_checkpoint
 
+
 def load_competition_test_data(file_path):
     """
     Loads all data from a JSONL file for inference, preserving order,
@@ -59,20 +63,21 @@ def load_competition_test_data(file_path):
     print(f"Loaded {len(data)} samples for inference.")
     return data
 
+
 def tokenize_data(dataset, tokenizer):
     """Tokenizes the text data using the same approach as the training script."""
     # This uses tokenizer(examples["text"], truncation=True), mirroring the training script.
     # DataCollatorWithPadding handles the padding to max length in the batch.
     return dataset.map(lambda examples: tokenizer(examples["text"], truncation=True), batched=True)
 
-def generate_and_save_predictions():
-    """Loads the model, performs inference, and saves results in Codalab JSONL format."""
+
+if __name__ == '__main__':
 
     # 1. Load Data
     raw_data = load_competition_test_data(TEST_FILE)
     if not raw_data:
         print("Error: No data loaded. Cannot perform inference.")
-        return
+        sys.exit(-1)
 
     # Convert to Hugging Face Dataset
     test_dataset = Dataset.from_list(raw_data)
@@ -93,7 +98,7 @@ def generate_and_save_predictions():
         print(f"Error loading model or tokenizer using path: '{model_directory}'.")
         print("Please verify that the directory contains 'config.json' and 'model.safetensors' or 'pytorch_model.bin'.")
         print(f"Details: {e}")
-        return
+        sys.exit(-1)
 
     # 3. Tokenize Data
     tokenized_test_dataset = tokenize_data(test_dataset, tokenizer)
@@ -111,7 +116,7 @@ def generate_and_save_predictions():
             per_device_eval_batch_size=BATCH_SIZE,
             report_to="none"
         ),
-        data_collator=data_collator # Use the padding collator
+        data_collator=data_collator  # Use the padding collator
     )
 
     # 5. Perform Inference
@@ -132,16 +137,13 @@ def generate_and_save_predictions():
     for i, label in enumerate(predicted_labels):
         # Create a dictionary containing the ID and the prediction, using '_id' as the key
         jsonl_obj = {
-            "_id": unique_ids[i], # Key changed to '_id' to match user request
+            "_id": unique_ids[i],
             "conspiracy": label
         }
         # Convert the dictionary to a JSON string and append to the list
         jsonl_lines.append(json.dumps(jsonl_obj))
 
     with open(SUBMISSION_FILE, 'w') as f:
-        # Write each JSON string followed by a newline
         f.write('\n'.join(jsonl_lines) + '\n')
 
     print(f"Submission file '{SUBMISSION_FILE}' generated successfully.")
-
-generate_and_save_predictions()

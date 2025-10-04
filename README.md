@@ -2,9 +2,23 @@
 Scripts to facilitate participation in the 2026 Semeval Task 10: PsyCoMark -- Psycholinguistic Conspiracy Marker Extraction and Detection
 
 --------
-## Download plain text data
+## Download and rehydrate plain text data
 1. `git clone https://github.com/hide-ous/semeval26_starter_pack.git`
 2. `cd semeval26_starter_pack`
 3. `pip install -r requirements.txt`
-4. place `train_redacted.jsonl` in the folder
+4. place `train_redacted.jsonl` in the folder (available on [zenodo](https://doi.org/10.5281/zenodo.15114171))
 5. run `python rehydrate_data.py` to generate `train_rehydrated.jsonl` containing plain texts
+6. `submission_example.py` provides you with the boilerplate script to prepare a submission in the right format (by default, no model is used: the submission attributes no markers and "No" conspiracy to each comment)
+
+## [Optional] Train conspiracy detection baseline and submit to codabench
+1. run `train_binary.py` (~6 minutes on gpu) 
+2. run `infer_binary.py`
+3. zip the submission `submission.jsonl` --> `submission.zip`
+4. go to the [detection task on codabench](https://www.codabench.org/competitions/10749/)
+5. under my submissions -> upload the zip file -> wait a few minutes for evaluation -> add to the leaderboard and make public
+6. you should score ~ 0.76 weighted F1 on the dev set
+
+## [Optional] Train conspiracy marker extraction baseline and submit to codabench
+1. same instructions as above, but with `train_one_span.py` (~30 minutes on gpu) and `infer_one_span.py`
+2. submit to the [extraction task on codabench](https://www.codabench.org/competitions/10751/)
+3. you should score ~ 0.15 overlap F1 on the dev set

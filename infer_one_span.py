@@ -1,4 +1,6 @@
 import json
+import sys
+
 import numpy as np
 import os
 import glob
@@ -12,13 +14,13 @@ from transformers import (
 )
 from collections import defaultdict
 
-# The base path for the single-type trained models (e.g., distilbert-single-type-simplified-Action)
 MODEL_PATH_BASE = "distilbert-single-type-simplified"
 MARKER_TYPES_TO_INFER = ["Action", "Actor", "Effect", "Evidence", "Victim"]
 TEST_FILE = "dev_rehydrated.jsonl"
 SUBMISSION_FILE = "submission.jsonl"
 MODEL_NAME = "distilbert-base-uncased"
 BATCH_SIZE = 64
+
 
 def find_latest_checkpoint(base_path, marker_type):
     """
@@ -36,6 +38,7 @@ def find_latest_checkpoint(base_path, marker_type):
     latest_checkpoint = checkpoint_dirs[-1]
     print(f"Found latest checkpoint: {latest_checkpoint}")
     return latest_checkpoint
+
 
 def load_data(file_path):
     """Loads all data from a JSONL file, preserving order, and retaining the unique ID."""
@@ -55,17 +58,18 @@ def load_data(file_path):
     print(f"Loaded {len(data)} samples for inference.")
     return data
 
-# NOTE: This function is only used here to generate the correct input tensors,
-# we don't need the true labels, but the structure must be consistent.
+
 def tokenize_and_align_labels(examples, tokenizer, label_to_id):
     """Tokenizes the text and returns inputs with offset mapping for post-processing."""
-    tokenized_inputs = tokenizer(examples["text"], truncation=True, padding="max_length", max_length=128, return_offsets_mapping=True)
+    tokenized_inputs = tokenizer(examples["text"], truncation=True, padding="max_length", max_length=128,
+                                 return_offsets_mapping=True)
 
     # We generate dummy labels as the Trainer expects a 'labels' key in the dataset,
     # but the actual values (-100) are ignored during prediction.
     tokenized_inputs["labels"] = [[-100] * len(offset_map) for offset_map in tokenized_inputs["offset_mapping"]]
 
     return tokenized_inputs
+
 
 def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
     """
@@ -87,8 +91,8 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
     # Assuming ID 0 is 'O' and ID 1 is the marker type.
     positive_label_type = id_to_label.get(1)
     if not positive_label_type or positive_label_type == "O":
-         print("Error: Model configuration does not match simplified binary training (ID 1 is not the marker type).")
-         return reconstructed_markers
+        print("Error: Model configuration does not match simplified binary training (ID 1 is not the marker type).")
+        return reconstructed_markers
 
     for i, pred_ids in enumerate(predictions):
         offsets = tokenized_dataset[i]['offset_mapping']
@@ -101,7 +105,8 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
             offset_tuple = offsets[token_idx]
 
             # Check for special tokens, padding, or tokens outside the text range
-            is_special = (offset_tuple is None or offset_tuple[0] is None or offset_tuple[1] is None or (offset_tuple[0] == 0 and offset_tuple[1] == 0))
+            is_special = (offset_tuple is None or offset_tuple[0] is None or offset_tuple[1] is None or (
+                        offset_tuple[0] == 0 and offset_tuple[1] == 0))
 
             if is_special:
                 # If we were tracking a span, close it using the end of the *previous* non-special token
@@ -109,15 +114,15 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
                     prev_end_char = None
                     # Find the end of the last valid token
                     if token_idx > 0 and offsets[token_idx - 1][1] is not None:
-                         prev_end_char = offsets[token_idx - 1][1]
+                        prev_end_char = offsets[token_idx - 1][1]
 
                     if prev_end_char is not None:
-                         span_text = original_text[current_span_start_char:prev_end_char] # <-- Extract text
-                         reconstructed_markers[i].append({
+                        span_text = original_text[current_span_start_char:prev_end_char]
+                        reconstructed_markers[i].append({
                             "startIndex": current_span_start_char,
                             "endIndex": prev_end_char,
                             "type": positive_label_type,
-                            "text": span_text # <-- Add text
+                            "text": span_text
                         })
 
                     current_span_start_char = None
@@ -137,7 +142,8 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
                 if current_span_start_char is not None:
                     # End is the end of the PREVIOUS token. The token at current_idx is 'O'.
                     # We need the end of the token at token_idx - 1.
-                    prev_end_char = offsets[token_idx - 1][1] if token_idx > 0 and offsets[token_idx - 1][1] is not None else start_char
+                    prev_end_char = offsets[token_idx - 1][1] if token_idx > 0 and offsets[token_idx - 1][
+                        1] is not None else start_char
 
                     span_text = original_text[current_span_start_char:prev_end_char]
                     reconstructed_markers[i].append({
@@ -155,16 +161,16 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
             last_token_idx = len(pred_ids) - 1
             # Search backwards from the end of the sequence for the last non-special token's end index
             while last_token_idx >= 0:
-                 offset_tuple_end = offsets[last_token_idx]
-                 # Check if the token at this index is not a special token
-                 if offset_tuple_end is not None and offset_tuple_end[1] is not None and offset_tuple_end[1] != 0:
-                     last_valid_end = offset_tuple_end[1]
-                     break
-                 last_token_idx -= 1
+                offset_tuple_end = offsets[last_token_idx]
+                # Check if the token at this index is not a special token
+                if offset_tuple_end is not None and offset_tuple_end[1] is not None and offset_tuple_end[1] != 0:
+                    last_valid_end = offset_tuple_end[1]
+                    break
+                last_token_idx -= 1
 
             if last_valid_end is not None:
-                 span_text = original_text[current_span_start_char:last_valid_end]
-                 reconstructed_markers[i].append({
+                span_text = original_text[current_span_start_char:last_valid_end]
+                reconstructed_markers[i].append({
                     "startIndex": current_span_start_char,
                     "endIndex": last_valid_end,
                     "type": positive_label_type,
@@ -173,20 +179,19 @@ def reconstruct_spans(predictions, tokenized_dataset, id_to_label):
 
     return reconstructed_markers
 
-def generate_and_save_predictions():
-    """Loads all single-type models, performs inference, aggregates markers, and saves results."""
+
+if __name__ == '__main__':
 
     # 1. Load Data
     raw_data = load_data(TEST_FILE)
     if not raw_data:
         print("Error: No data loaded. Cannot perform inference.")
-        return
+        sys.exit(-1)
 
     unique_ids = [d["_id"] for d in raw_data]
     conspiracy_keys = [d["conspiracy"] for d in raw_data]
 
     test_dataset = Dataset.from_list(raw_data)
-
 
     tokenizer = DistilBertTokenizerFast.from_pretrained(MODEL_NAME)
 
@@ -195,7 +200,8 @@ def generate_and_save_predictions():
     tokenized_test_dataset = test_dataset.map(
         tokenize_and_align_labels,
         batched=True,
-        remove_columns=[col for col in test_dataset.column_names if col not in ['text', 'offset_mapping', '_id', 'conspiracy']],
+        remove_columns=[col for col in test_dataset.column_names if
+                        col not in ['text', 'offset_mapping', '_id', 'conspiracy']],
         fn_kwargs={"tokenizer": tokenizer, "label_to_id": dummy_label_to_id}
     )
 
@@ -253,7 +259,6 @@ def generate_and_save_predictions():
         for i, markers in current_marker_map.items():
             all_predicted_markers[i].extend(markers)
 
-    # 7. Save Final Aggregated Results in Codalab-ready JSONL format
     print(f"\nSaving final aggregated predictions ({len(raw_data)} samples) to {SUBMISSION_FILE} (JSONL format)...")
 
     jsonl_lines = []
@@ -272,7 +277,4 @@ def generate_and_save_predictions():
     with open(SUBMISSION_FILE, 'w') as f:
         f.write('\n'.join(jsonl_lines) + '\n')
 
-    print(f"✅ Submission file '{SUBMISSION_FILE}' generated successfully.")
-
-
-
+    print(f"Submission file '{SUBMISSION_FILE}' generated successfully.")
